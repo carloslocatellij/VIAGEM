@@ -177,4 +177,9 @@ pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,venv
 
+.python-version
+.lock
 pyproject.toml
+poetry.lock
+.vscode/
+__init__*

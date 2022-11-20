@@ -2,7 +2,7 @@ import os
 from pymongo import MongoClient
 
 
-class MongoTable:
+class MongoTable: 
     _db = None
 
     def __init__(self):
