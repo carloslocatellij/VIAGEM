@@ -1,31 +1,28 @@
-import os
 from pymongo import MongoClient
 
 
-class MongoTable: 
+class MongoTable:
     _db = None
 
-    def __init__(self):
-        table_name = self.__class__.__name__
-        if not self._db:
-            conn = MongoClient('mongodb://localhost:27017/')
-            self._db = conn['viagens']
-        self._collection = self._db.get_collection(table_name)
+    @classmethod
+    def collection(cls):
+        if MongoTable._db is None:
+            conn = MongoClient('mongodb://localhost:27017/', connect=False)
+            MongoTable._db = conn['viagens']
+        return MongoTable._db.get_collection(cls.__name__)
 
     def save(self):
-        record = self.__data()
+        record = {
+            k: v for k, v in self.__dict__.items()
+            if not k.startswith('_')
+        }
         key = list(record.keys())[0]  # --- O primeiro campo é a chave
-        self._collection.update_one(
+        self.collection().update_one(
             {key: record[key]},
             {'$set': record},
             upsert=True
         )
 
-    def __data(self) -> dict:
-        return {
-            k: str(v) for k, v in self.__dict__.items()
-            if not k.startswith('_') and v
-        }
-
-    def find(self) -> list:
-        return list(self._collection.find(filter=self.__data()))
+    @classmethod
+    def find(cls, **args) -> list:
+        return [cls(**o) for o in cls.collection().find(filter=args)]
