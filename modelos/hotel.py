@@ -4,20 +4,30 @@ from hospede import Hospede as hospede
 
 
 class Hotel(MongoTable):
-    def __init__(self, nome: str, cidade: str, num_quartos: int):
+    def __init__(self, nome: str, cidade: str, estrelas: int, tamanho: int):
         self.nome = nome
         self.cidade = cidade
-        self.num_quartos = num_quartos
-        self.quartos = [Quarto(n+1) for n in range(0, self.num_quartos)]
+        self.estrelas = estrelas
+        self.tamanho = tamanho
+        self.quartos = [Quarto(n+1) for n in range(0, self.tamanho)]
 
     def reserva(self, hospede: object, quarto: int):
-        if None not in (n.ocupante for n in self.quartos):
-            return 'Hotel está com lotação máxima'
-        else:
-            self.quartos[quarto].ocupante = hospede
+        for n in self.quartos:
+            if not n.reservado:
+                self.quartos[quarto].ocupante = hospede
+                #self.save()
+            else:
+                raise Exception(' Hotel Lotado')
 
-    def check_in(self, hospede: str):
-        pass
+    def check_in(self, hospede: object, quarto: int):
+        reserva = self.quartos[quarto]
+        if reserva.ocupante == hospede:
+            reserva.ocupado = True
+            return reserva.ocupado
+            #self.save()
+        else:
+            raise Exception('Quarto {} não está reservado para {}.'.format(
+                quarto, hospede))
 
     def check_out(self, quarto: object):
         pass
@@ -28,10 +38,10 @@ class Hotel(MongoTable):
 
 class Quarto():
     def __init__(self, numero_quarto: int, ocupante: object = None, 
-    tipo: str = 'básico', ocupado: bool = False):
+                    reservado: bool = False, ocupado: bool = False):
         self.quarto = numero_quarto
         self.ocupante = ocupante
-        self.tipo = tipo
+        self.reservado = reservado
         self.ocupado = ocupado
 
     def __setitem__(self, __name: str, __value: Any) -> None:
@@ -52,8 +62,13 @@ city = 'San Francisco'
 qtd_quartos = 3
 
 hosp = hospede(nome, idade)
-hotel = Hotel(h, city, qtd_quartos)
+hotel = Hotel(h, city, 3, qtd_quartos)
 hotel.reserva(hosp, 1)
 
 print(hotel.quartos[1].ocupante)
 
+print(hotel.quartos[1].ocupado)
+
+hotel.check_in(hosp, 1)
+
+print(hotel.quartos[1].ocupado)
