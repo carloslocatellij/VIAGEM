@@ -1,16 +1,13 @@
-import unittest
-
-from hotel import Hotel
-
-
-h = Hotel('Hotel California', 'San Francisco', 6)
+import pytest
+from modelos import hotel
 
 
-class main(unittest.TestCase):
+nome = 'California'
 
-    def test_hotel_nome(self):
-        assert h.nome == 'Hotel California',  'Erro no nome'
+h = modelos.hotel.Hotel(nome, 'San Francisco', 5, 6)
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_hotel_nome():
+    assert h.nome == 'Hotel California' , 'Ok'
+
+test_hotel_nome()

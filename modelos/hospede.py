@@ -1,4 +1,4 @@
-from mongo_table import MongoTable
+from mongoTable import MongoTable
 
 
 class Hospede(MongoTable):
@@ -7,4 +7,4 @@ class Hospede(MongoTable):
         self.idade = idade
 
     def __repr__(self):
-        return f'O ocupante chama {self.nome} !'
+        return f'Hospede({self.nome}, {self.idade})'

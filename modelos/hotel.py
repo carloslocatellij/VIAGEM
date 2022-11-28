@@ -1,5 +1,5 @@
 from typing import Any
-from mongo_table import MongoTable
+from mongoTable import MongoTable
 from hospede import Hospede as hospede
 
 
@@ -12,12 +12,16 @@ class Hotel(MongoTable):
         self.quartos = [Quarto(n+1) for n in range(0, self.tamanho)]
 
     def reserva(self, hospede: object, quarto: int):
-        for n in self.quartos:
-            if not n.reservado:
+        disponiveis = [n for n in self.quartos if n[2] == True]
+        if disponiveis:
+            if not self.quartos[quarto].reservado\
+                    or not self.quartos[quarto].ocupado:
                 self.quartos[quarto].ocupante = hospede
                 #self.save()
             else:
-                raise Exception(' Hotel Lotado')
+                raise Exception('Quarto Ocupado')
+        else:
+            raise Exception(' Hotel Lotado')
 
     def check_in(self, hospede: object, quarto: int):
         reserva = self.quartos[quarto]
@@ -37,18 +41,16 @@ class Hotel(MongoTable):
 
 
 class Quarto():
-    def __init__(self, numero_quarto: int, ocupante: object = None, 
-                    reservado: bool = False, ocupado: bool = False):
+    def __init__(self, numero_quarto: int, ocupante: object = None,
+                 reservado: bool = False, ocupado: bool = False):
         self.quarto = numero_quarto
         self.ocupante = ocupante
         self.reservado = reservado
         self.ocupado = ocupado
+        
 
-    def __setitem__(self, __name: str, __value: Any) -> None:
-        self.__name = __value
-
-    def __getitem__(self, __name: str) -> Any:
-        return self.__name
+    def __getitem__(self, quarto: int) -> Any:
+        return self.quarto
 
     def __repr__(self) -> str:
         return f'Quarto ({self.quarto}, {self.ocupante})'
