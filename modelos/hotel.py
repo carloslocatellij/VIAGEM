@@ -12,20 +12,21 @@ class Hotel(MongoTable):
         self.quartos = [Quarto(n+1) for n in range(0, self.tamanho)]
 
     def reserva(self, hospede: object, quarto: int):
-        disponiveis = [n for n in self.quartos if n[2] == True]
-        if disponiveis:
+        reservados = [n.reservado for n in self.quartos]
+        if not all(reservados):
             if not self.quartos[quarto].reservado\
                     or not self.quartos[quarto].ocupado:
                 self.quartos[quarto].ocupante = hospede
+                self.quartos[quarto].reservado = True
                 #self.save()
             else:
-                raise Exception('Quarto Ocupado')
+                raise Exception('Quarto já Reservado/Ocupado')
         else:
             raise Exception(' Hotel Lotado')
 
-    def check_in(self, hospede: object, quarto: int):
+    def check_in(self, hospede: object, quarto: int):  
         reserva = self.quartos[quarto]
-        if reserva.ocupante == hospede:
+        if reserva.ocupante == hospede and reserva.reservado:
             reserva.ocupado = True
             return reserva.ocupado
             #self.save()
@@ -47,13 +48,12 @@ class Quarto():
         self.ocupante = ocupante
         self.reservado = reservado
         self.ocupado = ocupado
-        
 
     def __getitem__(self, quarto: int) -> Any:
         return self.quarto
 
     def __repr__(self) -> str:
-        return f'Quarto ({self.quarto}, {self.ocupante})'
+        return f'Quarto ({str(self.quarto)}, {repr(self.ocupante)})'
 
 
 nome = 'Carlos'
@@ -64,6 +64,11 @@ city = 'San Francisco'
 qtd_quartos = 3
 
 hosp = hospede(nome, idade)
+p1 = hospede('José', 22)
+p2 = hospede('João', 33)
+p3 = hospede('Raul', 44)
+
+
 hotel = Hotel(h, city, 3, qtd_quartos)
 hotel.reserva(hosp, 1)
 

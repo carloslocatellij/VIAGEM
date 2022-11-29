@@ -4,7 +4,7 @@ from modelos import hotel
 
 nome = 'California'
 
-h = modelos.hotel.Hotel(nome, 'San Francisco', 5, 6)
+h = hotel.Hotel(nome, 'San Francisco', 5, 6)
 
 
 def test_hotel_nome():
