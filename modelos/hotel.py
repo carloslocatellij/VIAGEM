@@ -1,6 +1,6 @@
 from typing import Any
-from mongoTable import MongoTable
-from hospede import Hospede as hospede
+from modelos.mongoTable import MongoTable
+from modelos.hospede import Hospede as hospede
 
 
 class Hotel(MongoTable):

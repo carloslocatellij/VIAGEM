@@ -1,13 +1,2 @@
-import pytest
-from modelos import hotel
+import modelos.hotel
 
-
-nome = 'California'
-
-h = hotel.Hotel(nome, 'San Francisco', 5, 6)
-
-
-def test_hotel_nome():
-    assert h.nome == 'Hotel California' , 'Ok'
-
-test_hotel_nome()
